@@ -1,69 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Google Calculator Clone</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>GTCO Login</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="calculator">
-    <div class="display">
-      <div class="top-bar">
-        <img src="./history icon.png" alt="" class="history-icon" id="history-icon">
-        <input type="text" id="result" value="0" disabled>
-      </div>
-      <div id="history-panel" class="history-panel"></div>
-    </div>
-
-    <div class="buttons">
-      <div class="toggle-container">
-        <button class="btn toggle-btn active" onclick="setMode('Rad')">Rad</button>
-        <span>|</span>
-        <button class="btn toggle-btn" onclick="setMode('Deg')">Deg</button>
-      </div>
-      <button class="btn">x!</button>
-      <button class="btn">(</button>
-      <button class="btn">)</button>
-      <button class="btn" id="percent">%</button>
-      <button class="btn action">AC</button>
-
-      <button class="btn" id="inv-btn">Inv</button>
-      <button class="btn" id="sin">sin</button>
-      <button class="btn" id="In">ln</button>
-      <button class="btn">7</button>
-      <button class="btn">8</button>
-      <button class="btn">9</button>
-      <button class="btn operator">÷</button>
-
-      <button class="btn">π</button>
-      <button class="btn" id="cos">cos</button>
-      <button class="btn" id="log">log</button>
-      <button class="btn">4</button>
-      <button class="btn">5</button>
-      <button class="btn">6</button>
-      <button class="btn operator">×</button>
-
-      <button class="btn">e</button>
-      <button class="btn" id="tan">tan</button>
-      <button class="btn" id="sqrt">√</button>
-      <button class="btn">1</button>
-      <button class="btn">2</button>
-      <button class="btn">3</button>
-      <button class="btn operator">−</button>
-
-      <button class="btn">Ans</button>
-      <button class="btn">EXP</button>
-      <button class="btn" id="square">x²</button>
-      <button class="btn">0</button>
-      <button class="btn">.</button>
-      <button class="btn equal">=</button>
-      <button class="btn operator">+</button>
-    </div>
-
-    <div class="math-solver">Maths solver ></div>
+  <div id="loginPage" class="page-center">
+    <header>
+      <img src="gtco.png" alt="Phase Bank Logo" class="logo" />
+      <h2>Login to Phase Bank Demo</h2>
+    </header>
+    <label for="userLogin">Select User:</label>
+    <select id="userLogin">
+      <option value="0">Tamilore</option>
+      <option value="1">Tyrese</option>
+      <option value="2">Haliburton</option>
+    </select>
+    <label for="email">Email (any):</label>
+    <input type="email" id="email" placeholder="Enter email" required />
+    <label for="password">Password (any):</label>
+    <input type="password" id="password" placeholder="Enter password" required />
+    <button id="loginBtn">Login</button>
   </div>
 
-  <script src="./script.js"></script>
+  <script src="login.js"></script>
 </body>
 </html>
+

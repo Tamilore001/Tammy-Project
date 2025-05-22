@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GTCO Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="dashboardPage" class="page-center">
+    <header>
+      <img src="gtco.png" alt="Phase Bank Logo" class="logo" />
+      <h2>Phase Bank Dashboard</h2>
+      <button id="logoutBtn">Logout</button>
+    </header>
+
+    <div class="balance">Balance: ₦<span id="balance">0</span></div>
+
+    <div class="transaction-group">
+      <input type="number" id="creditAmount" placeholder="Enter amount to credit" />
+      <button id="creditBtn">Credit</button>
+      <div id="creditError" class="error-msg"></div>
+    </div>
+
+    <div class="transaction-group">
+      <input type="number" id="debitAmount" placeholder="Enter amount to debit" />
+      <button id="debitBtn">Debit</button>
+      <div id="debitError" class="error-msg"></div>
+    </div>
+
+    <div class="transaction-group">
+      <input type="number" id="airtimeAmount" placeholder="Enter airtime amount" />
+      <button id="airtimeBtn">Buy Airtime</button>
+      <div id="airtimeError" class="error-msg"></div>
+    </div>
+
+    <div class="transaction-group">
+      <input type="number" id="betAmount" placeholder="Enter betting amount" />
+      <button id="betBtn">Bet</button>
+      <div id="betError" class="error-msg"></div>
+    </div>
+
+    <h3>Transaction History</h3>
+    <ul class="history" id="historyList"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

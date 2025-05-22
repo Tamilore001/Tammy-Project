@@ -1,226 +1,150 @@
-const result = document.getElementById("result");
-const buttons = document.querySelectorAll(".btn");
-const historyPanel = document.getElementById("history-panel");
-const historyIcon = document.getElementById("history-icon");
+// dashboard.js
 
-// Identify the sin, cos, tan, log, ln buttons by their initial text content
-const sinButton = Array.from(buttons).find(btn => btn.textContent === "sin");
-const cosButton = Array.from(buttons).find(btn => btn.textContent === "cos");
-const tanButton = Array.from(buttons).find(btn => btn.textContent === "tan");
-const logButton = Array.from(buttons).find(btn => btn.textContent === "log");
-const lnButton = Array.from(buttons).find(btn => btn.textContent === "ln");
+// Three demo customers with initial empty balances and empty history
+const customers = [
+  { name: 'Tammy', balance: 3000, history: [] },
+  { name: 'Tyrese', balance: 400, history: [] },
+  { name: 'Haliburton', balance: 10000, history: [] },
+];
 
-let expression = "";
-let history = [];
-let isInverseMode = false;
-let isDegreeMode = true; // Default to degree mode
+// Grab DOM elements
+const balanceDisplay = document.getElementById('balance');
+const historyList = document.getElementById('historyList');
 
-function updateDisplay() {
-  result.value = expression || "0";
-}
+const creditAmountInput = document.getElementById('creditAmount');
+const debitAmountInput = document.getElementById('debitAmount');
+const airtimeAmountInput = document.getElementById('airtimeAmount');
+const betAmountInput = document.getElementById('betAmount');
 
-function factorial(n) {
-  if (n < 0) return NaN;
-  if (n === 0 || n === 1) return 1;
-  let f = 1;
-  for (let i = 2; i <= n; i++) {
-    f *= i;
+const creditError = document.getElementById('creditError');
+const debitError = document.getElementById('debitError');
+const airtimeError = document.getElementById('airtimeError');
+const betError = document.getElementById('betError');
+
+const logoutBtn = document.getElementById('logoutBtn');
+const creditBtn = document.getElementById('creditBtn');
+const debitBtn = document.getElementById('debitBtn');
+const airtimeBtn = document.getElementById('airtimeBtn');
+const betBtn = document.getElementById('betBtn');
+
+let currentUserIndex = null;
+
+// Load logged in user from localStorage
+function loadUser() {
+  const savedIndex = localStorage.getItem('loggedInUser');
+  if (savedIndex === null) {
+    alert('No user logged in. Redirecting to login page.');
+    window.location.href = 'index.html';
+    return;
   }
-  return f;
+  currentUserIndex = Number(savedIndex);
+  renderUserData();
 }
 
-function degToRad(deg) {
-  return deg * Math.PI / 180;
+// Render user data on dashboard
+function renderUserData() {
+  const user = customers[currentUserIndex];
+  balanceDisplay.textContent = user.balance.toFixed(2);
+
+  // Clear history
+  historyList.innerHTML = '';
+  // Add history items
+  user.history.slice().reverse().forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = `${item.label}: ₦${item.amount.toFixed(2)}`;
+    li.className = item.type === 'credit' ? 'credit' : 'debit';
+    historyList.appendChild(li);
+  });
+
+  clearErrors();
+  clearInputs();
 }
 
-function radToDeg(rad) {
-  return rad * 180 / Math.PI;
+// Clear input fields
+function clearInputs() {
+  creditAmountInput.value = '';
+  debitAmountInput.value = '';
+  airtimeAmountInput.value = '';
+  betAmountInput.value = '';
 }
 
-// Toggle history panel
-historyIcon.addEventListener("click", function () {
-  if (historyPanel.style.display === "none") {
-    updateHistory();
-    historyPanel.style.display = "block";
+// Clear error messages
+function clearErrors() {
+  creditError.textContent = '';
+  debitError.textContent = '';
+  airtimeError.textContent = '';
+  betError.textContent = '';
+}
+
+// Add transaction to user history and update balance
+function addTransaction(type, amount, label) {
+  const user = customers[currentUserIndex];
+  if (type === 'credit') {
+    user.balance += amount;
   } else {
-    historyPanel.style.display = "none";
+    user.balance -= amount;
   }
+  user.history.push({ type, amount, label });
+  renderUserData();
+}
+
+// Validate input amount (positive number)
+function validateAmount(amount, errorElement, errorMessage) {
+  if (isNaN(amount) || amount <= 0) {
+    errorElement.textContent = errorMessage;
+    return false;
+  }
+  return true;
+}
+
+// Transaction handlers
+creditBtn.addEventListener('click', function() {
+  clearErrors();
+  const amount = Number(creditAmountInput.value);
+  if (!validateAmount(amount, creditError, 'Enter a positive amount to credit')) return;
+  addTransaction('credit', amount, 'Credit');
 });
 
-function updateHistory() {
-  historyPanel.innerHTML = "";
-  history.slice().reverse().forEach(function (item) {
-    const p = document.createElement("p");
-    p.textContent = item;
-    historyPanel.appendChild(p);
-  });
-}
+debitBtn.addEventListener('click', function() {
+  clearErrors();
+  const amount = Number(debitAmountInput.value);
+  if (!validateAmount(amount, debitError, 'Enter a positive amount to debit')) return;
 
-function updateTrigButtonLabels() {
-  if (isInverseMode) {
-    sinButton.textContent = "arcsin";
-    cosButton.textContent = "arccos";
-    tanButton.textContent = "arctan";
-    logButton.textContent = "10^x";
-    lnButton.textContent = "e^x";
-  } else {
-    sinButton.textContent = "sin";
-    cosButton.textContent = "cos";
-    tanButton.textContent = "tan";
-    logButton.textContent = "log";
-    lnButton.textContent = "ln";
+  if (amount > customers[currentUserIndex].balance) {
+    debitError.textContent = 'Insufficient balance!';
+    return;
   }
-}
-
-function setMode(mode) {
-  isDegreeMode = (mode === 'Deg');
-  document.querySelectorAll('.toggle-btn').forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.textContent === mode) {
-      btn.classList.add('active');
-    }
-  });
-  console.log(`Mode set to: ${mode}, isDegreeMode: ${isDegreeMode}`);
-}
-
-buttons.forEach(function (button) {
-  button.addEventListener("click", function () {
-    const value = button.textContent;
-
-    if (expression === "Error" || expression.startsWith("arcsin/arccos") || expression.startsWith("log/ln")) {
-      expression = "";
-    }
-
-    if (value === "AC") {
-      expression = "";
-      isInverseMode = false;
-      isDegreeMode = true;
-      setMode('Deg'); // Reset to Deg mode
-      updateTrigButtonLabels();
-    } else if (value === "=") {
-      try {
-        let evalExpr = expression
-          .replace(/×/g, '*')
-          .replace(/÷/g, '/')
-          .replace(/−/g, '-')
-          .replace(/π/g, 'Math.PI')
-          .replace(/\be\b/g, 'Math.E')
-          .replace(/√\(/g, 'Math.sqrt(')
-          .replace(/x²/g, '**2')
-          .replace(/%/g, '/100');
-
-        // Check for log and ln input range (must be > 0)
-        if (!isInverseMode) {
-          const logMatch = evalExpr.match(/log\(([^)]+)\)/);
-          const lnMatch = evalExpr.match(/ln\(([^)]+)\)/);
-
-          if (logMatch) {
-            const arg = parseFloat(logMatch[1]);
-            if (isNaN(arg) || arg <= 0) {
-              expression = "log/ln input must be > 0";
-              updateDisplay();
-              return;
-            }
-          }
-          if (lnMatch) {
-            const arg = parseFloat(lnMatch[1]);
-            if (isNaN(arg) || arg <= 0) {
-              expression = "log/ln input must be > 0";
-              updateDisplay();
-              return;
-            }
-          }
-        }
-
-        // Check for arcsin and arccos input range
-        if (isInverseMode) {
-          const arcsinMatch = evalExpr.match(/arcsin\(([^)]+)\)/);
-          const arccosMatch = evalExpr.match(/arccos\(([^)]+)\)/);
-
-          if (arcsinMatch) {
-            const arg = parseFloat(arcsinMatch[1]);
-            if (isNaN(arg) || arg < -1 || arg > 1) {
-              expression = "arcsin/arccos input must be [-1, 1]";
-              updateDisplay();
-              return;
-            }
-          }
-          if (arccosMatch) {
-            const arg = parseFloat(arccosMatch[1]);
-            if (isNaN(arg) || arg < -1 || arg > 1) {
-              expression = "arcsin/arccos input must be [-1, 1]";
-              updateDisplay();
-              return;
-            }
-          }
-
-          evalExpr = evalExpr
-            .replace(/arcsin\(/g, 'radToDeg(Math.asin(')
-            .replace(/arccos\(/g, 'radToDeg(Math.acos(')
-            .replace(/arctan\(/g, 'radToDeg(Math.atan(')
-            .replace(/10\^x\(/g, 'Math.pow(10,')
-            .replace(/e\^x\(/g, 'Math.exp(');
-        } else {
-          if (isDegreeMode) {
-            evalExpr = evalExpr
-              .replace(/sin\(([^)]+)\)/g, 'Math.sin(degToRad($1))')
-              .replace(/cos\(([^)]+)\)/g, 'Math.cos(degToRad($1))')
-              .replace(/tan\(([^)]+)\)/g, 'Math.tan(degToRad($1))');
-          } else {
-            evalExpr = evalExpr
-              .replace(/sin\(([^)]+)\)/g, 'Math.sin($1)')
-              .replace(/cos\(([^)]+)\)/g, 'Math.cos($1)')
-              .replace(/tan\(([^)]+)\)/g, 'Math.tan($1)');
-          }
-          evalExpr = evalExpr
-            .replace(/log\(/g, 'Math.log10(')
-            .replace(/ln\(/g, 'Math.log(');
-        }
-
-        evalExpr = evalExpr
-          .replace(/(\d+)\^/g, 'Math.pow($1,');
-
-        // Factorials
-        evalExpr = evalExpr.replace(/(\d+)!/g, function (match, n) {
-          return factorial(parseInt(n));
-        });
-
-        console.log(`Evaluating: ${evalExpr}`);
-        const resultValue = Function("degToRad", "radToDeg", "return " + evalExpr)(degToRad, radToDeg);
-
-        history.push(expression + " = " + resultValue);
-        expression = resultValue.toString();
-        isInverseMode = false;
-        updateTrigButtonLabels();
-      } catch (e) {
-        console.error(`Error evaluating expression: ${e}`);
-        expression = "Error";
-      }
-    } else if (value === "Inv") {
-      isInverseMode = !isInverseMode;
-      updateTrigButtonLabels();
-    } else if (["Rad", "Deg"].includes(value)) {
-      setMode(value);
-    } else if (value === "%") {
-      expression += "%";
-    } else if (value === "x!") {
-      expression += "!";
-    } else if (value === "√") {
-      expression += "√()";
-      expression = expression.slice(0, -1); // move cursor inside ()
-    } else if (value === "x²") {
-      expression += "x²";
-    } else if (["sin", "cos", "tan", "arcsin", "arccos", "arctan", "log", "ln", "10^x", "e^x"].includes(value)) {
-      expression += value + "()";
-      expression = expression.slice(0, -1); // move cursor inside ()
-    } else if (value === "EXP") {
-      expression += "e";
-    } else if (value === "Ans") {
-      expression += result.value;
-    } else {
-      expression += value;
-    }
-
-    updateDisplay();
-  });
+  addTransaction('debit', amount, 'Debit');
 });
+
+airtimeBtn.addEventListener('click', function() {
+  clearErrors();
+  const amount = Number(airtimeAmountInput.value);
+  if (!validateAmount(amount, airtimeError, 'Enter a positive amount for airtime')) return;
+
+  if (amount > customers[currentUserIndex].balance) {
+    airtimeError.textContent = 'Insufficient balance for airtime!';
+    return;
+  }
+  addTransaction('debit', amount, 'Airtime Purchase');
+});
+
+betBtn.addEventListener('click', function() {
+  clearErrors();
+  const amount = Number(betAmountInput.value);
+  if (!validateAmount(amount, betError, 'Enter a positive amount for betting')) return;
+
+  if (amount > customers[currentUserIndex].balance) {
+    betError.textContent = 'Insufficient balance for betting!';
+    return;
+  }
+  addTransaction('debit', amount, 'Betting');
+});
+
+// Logout handler
+logoutBtn.addEventListener('click', function() {
+  localStorage.removeItem('loggedInUser');
+  window.location.href = 'index.html';
+});
+
+loadUser();

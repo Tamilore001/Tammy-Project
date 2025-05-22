@@ -1,135 +1,106 @@
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #202124;
   font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  padding-top: 40px;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 1rem;
+  min-height: 100vh;
 }
 
-.calculator {
-  width: 380px;
-}
-
-.display {
-  background-color: #292a2d;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 10px;
-  padding: 0 10px;
-}
-
-.history-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  filter: brightness(0) invert(1);
-  cursor: pointer;
-}
-
-.history-panel {
-  background-color: #1e1f22;
-  color: white;
-  padding: 10px;
-  margin-top: 10px;
+.page-center {
+  max-width: 400px;
+  margin: auto;
+  background: white;
+  padding: 1rem 2rem;
   border-radius: 8px;
-  display: none;
-  max-height: 200px;
-  overflow-y: auto;
-  font-size: 0.9rem;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
 
-.display input {
-  flex-grow: 1;
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 2rem;
-  text-align: right;
+h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+label, select, input {
+  display: block;
   width: 100%;
-  padding: 20px 0;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 100%;
+  cursor: pointer;
+  background: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.logo {
+  max-width: 100px;
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
+.balance {
+  font-size: 1.2rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.transaction-group {
+  margin-bottom: 1rem;
+}
+
+.transaction-group input {
+  width: 70%;
+  display: inline-block;
+  padding: 0.3rem;
+  font-size: 1rem;
   box-sizing: border-box;
 }
 
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  margin-top: 15px;
+.transaction-group button {
+  width: 28%;
+  display: inline-block;
+  margin-left: 2%;
+  padding: 0.4rem;
 }
 
-.toggle-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
-  background-color: #1a1a1a;
-  border-radius: 20px;
-  grid-column: span 2; /* Spans 2 columns to fit within the grid */
+.error-msg {
+  color: red;
+  font-size: 0.85rem;
+  height: 18px;
+  margin-top: 3px;
 }
 
-.toggle-btn {
-  background-color: #3c4043;
-  color: white;
-  border: none;
-  border-radius: 15px;
-  padding: 10px 15px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+ul.history {
+  list-style: none;
+  padding-left: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #fafafa;
 }
 
-.toggle-btn:hover {
-  background-color: #5f6368;
+ul.history li {
+  padding: 6px 10px;
+  border-bottom: 1px solid #eee;
 }
 
-.toggle-btn.active {
-  background-color: #8ab4f8;
-  color: black;
+ul.history li.credit {
+  color: green;
 }
 
-.btn {
-  background-color: #3c4043;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 15px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn:hover {
-  background-color: #5f6368;
-}
-
-.operator {
-  background-color: #5f6368;
-}
-
-.equal {
-  background-color: #8ab4f8;
-  color: black;
-}
-
-.action {
-  background-color: #5f6368;
-}
-
-.math-solver {
-  margin-top: 15px;
-  padding: 12px;
-  background-color: #2e2f31;
-  border-radius: 20px;
-  color: #fff;
-  text-align: center;
-  font-size: 0.95rem;
-  cursor: pointer;
+ul.history li.debit {
+  color: red;
 }
